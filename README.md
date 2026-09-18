@@ -21,6 +21,18 @@ fez, o que falta lançar, para onde foi o dinheiro, e corrige o que veio errado.
 
 ---
 
+> [!IMPORTANT]
+> ### 🔑 Conta de teste — entre no painel e veja funcionando
+>
+> | | |
+> |:--|:--|
+> | **Email** | `teste@email` |
+> | **Senha** | `teste-12345` |
+>
+> Use essas credenciais na tela de login do painel da gerência.
+
+---
+
 ## Em resumo
 
 Loja pequena fecha o caixa no caderno: quanto entrou em dinheiro, em cartão e
