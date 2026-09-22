@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FechaCaixa</title>
+<meta name="description" content="O fechamento de caixa das lojas de uma empresa: o turno é lançado no celular do balcão, sem login, e conferido no painel da gerência." />
+<meta property="og:title" content="FechaCaixa" />
+<meta property="og:description" content="O fechamento de caixa das lojas: lançado no celular, conferido no painel." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://fechacaixa.io" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314624a'/%3E%3Cpath d='M9 10h14M9 16h14M9 22h9' stroke='%23e6ece7' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E" />
+<style>
+  :root{
+    --verde:#14624a;
+    --verde-fundo:#0f4c39;
+    --verde-escuro:#0c3a2c;
+    --fundo:#e6ece7;
+    --papel:#ffffff;
+    --tinta:#1a1a17;
+    --apagado:#6e6a62;
+    --corpo:#3d423c;
+    --linha:#d3ded6;
+    --ambar:#8a6414;
+    --verde-suave:#e8f0ec;
+    --max:1080px;
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+
+  body{
+    margin:0;
+    background:var(--fundo);
+    color:var(--tinta);
+    font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .env{max-width:var(--max);margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+  code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.92em;}
+
+  /* ---------- topo ---------- */
+
+  .topo{
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+    padding-top:26px;padding-bottom:26px;flex-wrap:wrap;
+  }
+  .marca{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em;font-size:19px;text-decoration:none;}
+  .marca svg{display:block;}
+  .topo nav{display:flex;align-items:center;gap:22px;font-size:15px;}
+  .topo nav a{color:var(--apagado);text-decoration:none;padding-bottom:2px;border-bottom:1px solid transparent;}
+  .topo nav a:hover{color:var(--verde);border-bottom-color:var(--verde);}
+
+  /* ---------- herói ---------- */
+
+  .heroi{
+    display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;
+    padding:44px 0 76px;
+  }
+  .heroi h1{
+    font-size:clamp(34px,4.6vw,54px);
+    line-height:1.08;letter-spacing:-.034em;font-weight:700;
+    margin:0 0 20px;max-width:14ch;
+  }
+  .heroi p{margin:0 0 30px;font-size:19px;color:var(--corpo);max-width:46ch;}
+
+  .acoes{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{
+    display:inline-block;padding:11px 20px;border-radius:9px;
+    text-decoration:none;font-weight:600;font-size:15.5px;
+    border:1px solid transparent;transition:background .15s,border-color .15s,color .15s;
+  }
+  .btn-cheio{background:var(--verde);color:#fff;}
+  .btn-cheio:hover{background:var(--verde-fundo);}
+  .btn-vazio{border-color:#bccabf;color:var(--verde);background:transparent;}
+  .btn-vazio:hover{background:var(--verde-suave);border-color:var(--verde);}
+  .btn-claro{background:#fff;color:var(--verde-escuro);}
+  .btn-claro:hover{background:var(--verde-suave);}
+
+  /* ---------- comprovante ---------- */
+
+  .comprovante{
+    background:var(--papel);
+    border:1px solid var(--linha);
+    border-bottom:none;
+    border-radius:4px 4px 0 0;
+    padding:26px 26px 0;
+    box-shadow:0 18px 40px -26px rgba(20,60,45,.45);
+    position:relative;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:14.5px;
+  }
+  /* a borda serrilhada de papel picotado, no lugar de um retangulo qualquer */
+  .comprovante::after{
+    content:"";position:absolute;left:-1px;right:-1px;bottom:-12px;height:12px;
+    background-image:
+      linear-gradient(45deg, var(--papel) 50%, transparent 50%),
+      linear-gradient(-45deg, var(--papel) 50%, transparent 50%);
+    background-size:24px 12px;
+    background-repeat:repeat-x;
+  }
+  .comprovante-topo{
+    display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    padding-bottom:14px;border-bottom:1px dashed var(--linha);margin-bottom:16px;
+  }
+  .comprovante-topo strong{font-weight:600;font-size:15px;font-family:"Instrument Sans",sans-serif;letter-spacing:-.01em;}
+  .comprovante-topo span{color:var(--apagado);font-size:13px;}
+
+  .linha-valor{display:flex;justify-content:space-between;gap:16px;padding:7px 0;color:var(--corpo);}
+  .linha-valor b{font-weight:500;color:var(--tinta);font-variant-numeric:tabular-nums;}
+  .linha-valor.saida b{color:var(--ambar);}
+
+  .total{
+    display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+    margin:14px -16px 0;padding:14px 16px;
+    background:var(--verde-suave);border-radius:7px;
+  }
+  .total span{font-family:"Instrument Sans",sans-serif;font-weight:600;font-size:15px;}
+  .total b{font-size:23px;font-weight:600;color:var(--verde);font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+
+  .rodape-comprovante{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:16px 0 22px;font-size:12.5px;color:var(--apagado);
+  }
+  .carimbo{
+    border:1.5px solid var(--verde);color:var(--verde);
+    border-radius:5px;padding:3px 10px;font-weight:600;font-size:12px;
+    letter-spacing:.04em;white-space:nowrap;
+    transform:rotate(-4deg);transform-origin:center;
+    animation:carimbar .5s cubic-bezier(.2,1.5,.5,1) .7s both;
+  }
+  @keyframes carimbar{
+    from{opacity:0;transform:rotate(-14deg) scale(1.6);}
+    to{opacity:1;transform:rotate(-4deg) scale(1);}
+  }
+
+  /* ---------- demonstração: o único bloco invertido da página ---------- */
+
+  .demo{
+    background:var(--verde-escuro);color:#e9f2ed;border-radius:16px;
+    padding:36px 40px;
+    display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center;
+  }
+  .demo h2{color:#fff;margin:0 0 8px;font-size:26px;letter-spacing:-.025em;}
+  .demo p{margin:0;color:#b9cfc5;max-width:46ch;font-size:16.5px;}
+  .credenciais{
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+    border-radius:11px;padding:18px 22px;min-width:270px;
+  }
+  .credencial{display:flex;justify-content:space-between;gap:20px;padding:5px 0;font-size:14.5px;}
+  .credencial span{color:#9db8ac;}
+  .credencial b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:#fff;}
+  .demo .btn{margin-top:14px;display:block;text-align:center;}
+
+  /* ---------- seções ---------- */
+
+  section{padding:62px 0;border-top:1px solid var(--linha);}
+  section.sem-linha{border-top:none;}
+  h2{
+    font-size:clamp(25px,3vw,33px);letter-spacing:-.028em;font-weight:700;
+    margin:0 0 12px;line-height:1.15;
+  }
+  .intro{color:var(--apagado);margin:0 0 38px;max-width:58ch;font-size:17.5px;}
+
+  /* duas metades */
+  .metades{display:grid;grid-template-columns:.85fr 1.15fr;gap:28px;align-items:stretch;}
+  .metade{
+    background:var(--papel);border:1px solid var(--linha);border-radius:14px;
+    padding:26px;display:flex;flex-direction:column;
+  }
+  .metade h3{margin:0 0 6px;font-size:20px;letter-spacing:-.02em;}
+  .metade .quem{
+    font-size:13px;color:var(--verde);background:var(--verde-suave);
+    display:inline-block;padding:3px 9px;border-radius:20px;margin-bottom:14px;align-self:flex-start;
+  }
+  .metade p{margin:0 0 18px;color:var(--corpo);font-size:16px;}
+  .metade ul{margin:0;padding-left:18px;color:var(--apagado);font-size:15.5px;}
+  .metade li{margin-bottom:6px;}
+
+  /* telas do painel */
+  .telas{display:grid;grid-template-columns:repeat(2,1fr);gap:0 44px;}
+  .tela{
+    display:grid;grid-template-columns:132px 1fr;gap:16px;
+    padding:15px 0;border-bottom:1px solid var(--linha);align-items:baseline;
+  }
+  .tela code{font-size:14px;color:var(--verde);font-weight:500;}
+  .tela p{margin:0;font-size:15.5px;color:var(--corpo);}
+
+  /* perfis */
+  .perfis{background:var(--papel);border:1px solid var(--linha);border-radius:14px;overflow:hidden;}
+  .perfil{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:18px 24px;align-items:baseline;}
+  .perfil + .perfil{border-top:1px solid var(--linha);}
+  .perfil strong{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:600;}
+  .perfil p{margin:0;color:var(--corpo);font-size:16px;}
+
+  /* decisões */
+  .decisoes{display:grid;grid-template-columns:repeat(2,1fr);gap:30px 44px;margin-top:32px;}
+  .decisao{border-left:2px solid var(--verde);padding-left:16px;}
+  .decisao h3{margin:0 0 8px;font-size:17.5px;letter-spacing:-.015em;}
+  .decisao p{margin:0;color:var(--corpo);font-size:15.5px;}
+  .decisao p code{color:var(--verde);}
+
+  /* stack */
+  .pilha{display:grid;grid-template-columns:1fr 1fr;gap:44px;}
+  .pilha h3{margin:0 0 4px;font-size:18px;letter-spacing:-.015em;}
+  .pilha .repo-nome{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--apagado);margin:0 0 18px;}
+  .pilha ul{margin:0;padding:0;list-style:none;}
+  .pilha li{
+    display:flex;justify-content:space-between;gap:18px;
+    padding:9px 0;border-bottom:1px solid var(--linha);font-size:15.5px;
+  }
+  .pilha li span{color:var(--apagado);text-align:right;}
+
+  /* repositórios */
+  .repos{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .repo{
+    display:block;text-decoration:none;background:var(--papel);
+    border:1px solid var(--linha);border-radius:14px;padding:22px;
+    transition:border-color .15s,transform .15s;
+  }
+  .repo:hover{border-color:var(--verde);transform:translateY(-2px);}
+  .repo strong{display:block;font-family:"IBM Plex Mono",monospace;font-size:14.5px;margin-bottom:6px;color:var(--verde);}
+  .repo span{color:var(--corpo);font-size:15px;}
+
+  footer{
+    border-top:1px solid var(--linha);padding:30px 0 50px;
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    font-size:14.5px;color:var(--apagado);
+  }
+  footer a{color:var(--verde);}
+
+  /* ---------- responsivo ---------- */
+
+  @media (max-width:900px){
+    .heroi{grid-template-columns:1fr;gap:44px;padding:28px 0 56px;}
+    .heroi h1{max-width:none;}
+    .demo{grid-template-columns:1fr;gap:24px;padding:30px 26px;}
+    .metades,.pilha,.repos,.telas,.decisoes{grid-template-columns:1fr;}
+    .pilha{gap:36px;}
+    .decisoes{gap:22px;}
+    .perfil{grid-template-columns:1fr;gap:4px;}
+  }
+  @media (max-width:560px){
+    body{font-size:16px;}
+    .topo{gap:12px;padding-bottom:18px;}
+    .topo nav{gap:8px 16px;font-size:14px;flex-wrap:wrap;}
+    .tela{grid-template-columns:1fr;gap:2px;}
+    section{padding:48px 0;}
+    .credenciais{min-width:0;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *{animation:none !important;transition:none !important;}
+  }
+
+  a:focus-visible{outline:2px solid var(--verde);outline-offset:3px;border-radius:4px;}
+  .demo a:focus-visible{outline-color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="env">
+  <header class="topo">
+    <a class="marca" href="#">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="7" fill="#14624a"/>
+        <path d="M9 10h14M9 16h14M9 22h9" stroke="#e6ece7" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+      FechaCaixa
+    </a>
+    <nav>
+      <a href="#demonstracao">Ver funcionando</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#painel">O painel</a>
+      <a href="#feito-com">Como é feito</a>
+      <a href="#repositorios">Código</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="heroi">
+      <div>
+        <h1>O caixa do dia, fechado no balcão.</h1>
+        <p>Cada loja lança o turno pelo celular, sem login e sem treinamento. A gerência confere, corrige e vê para onde foi o dinheiro — de um painel só.</p>
+        <div class="acoes">
+          <a class="btn btn-cheio" href="https://fechacaixa.io/login">Entrar no painel</a>
+          <a class="btn btn-vazio" href="#repositorios">Ver o código</a>
+        </div>
+      </div>
+
+      <div class="comprovante" role="img" aria-label="Comprovante de fechamento da Loja Centro no turno da tarde: dinheiro 1.240,00, Pix 980,50, cartão 2.115,00, saídas menos 320,00, total 4.015,50, conferido.">
+        <div class="comprovante-topo">
+          <strong>Loja Centro</strong>
+          <span>turno da tarde · 22/09</span>
+        </div>
+        <div class="linha-valor"><span>Dinheiro</span><b>1.240,00</b></div>
+        <div class="linha-valor"><span>Pix</span><b>980,50</b></div>
+        <div class="linha-valor"><span>Cartão</span><b>2.115,00</b></div>
+        <div class="linha-valor saida"><span>Saídas</span><b>−320,00</b></div>
+        <div class="total"><span>Total do turno</span><b>4.015,50</b></div>
+        <div class="rodape-comprovante">
+          <span>lançado às 19:04 por Marcela</span>
+          <span class="carimbo">conferido</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="sem-linha" id="demonstracao">
+      <div class="demo">
+        <div>
+          <h2>Entre e olhe por dentro</h2>
+          <p>O painel está no ar com dados de exemplo. Use a conta de teste — dá para navegar por fechamentos, saídas, gráficos e notas fiscais.</p>
+        </div>
+        <div class="credenciais">
+          <div class="credencial"><span>E-mail</span><b>teste@email</b></div>
+          <div class="credencial"><span>Senha</span><b>teste-12345</b></div>
+          <a class="btn btn-claro" href="https://fechacaixa.io/login">Abrir fechacaixa.io</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="como-funciona">
+      <h2>Duas metades, dois públicos</h2>
+      <p class="intro">Quem fecha o caixa é quem estava no balcão, no fim do expediente, com pressa. Quem confere está no escritório, no dia seguinte. São duas telas, não uma com permissões em cima.</p>
+      <div class="metades">
+        <div class="metade">
+          <h3>O formulário</h3>
+          <span class="quem">no celular da loja</span>
+          <p>Abre no endereço da empresa e não pede login. O aparelho digita o código de acesso uma vez e vale por 180 dias.</p>
+          <ul>
+            <li>Instala como app na tela de início</li>
+            <li>Manhã e tarde; domingo e feriado, um turno só</li>
+            <li>Dinheiro, Pix, cartão — e as saídas do turno</li>
+            <li>Revisão com o total antes de enviar</li>
+          </ul>
+        </div>
+        <div class="metade">
+          <h3>O painel</h3>
+          <span class="quem">com login, para a gerência</span>
+          <p>Onde o dia vira número: o que cada loja fez, o que ainda não chegou e para onde foi o dinheiro que saiu da gaveta.</p>
+          <ul>
+            <li>Conferir, corrigir, cancelar ou lançar um turno retroativo</li>
+            <li>Saídas separadas: retirada, despesa, consumo e desperdício</li>
+            <li>Alerta de loja que não lançou e de lançamento repetido</li>
+            <li>Gráficos do período e planilha para exportar</li>
+            <li>Cada empresa com as suas lojas, funcionários e aparelhos</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="painel">
+      <h2>As telas do painel</h2>
+      <p class="intro">Uma rota por pergunta que a gerência faz durante o dia.</p>
+      <div class="telas">
+        <div class="tela"><code>/fechamentos</code><p>O que foi lançado, para conferir e corrigir</p></div>
+        <div class="tela"><code>/por-loja</code><p>Quanto cada loja fez e quais turnos ainda não chegaram</p></div>
+        <div class="tela"><code>/saidas</code><p>Retiradas e quem retirou, despesas, consumo e desperdício</p></div>
+        <div class="tela"><code>/graficos</code><p>A evolução do período</p></div>
+        <div class="tela"><code>/notas-fiscais</code><p>As NF-e importadas, por loja e por plano de contas</p></div>
+        <div class="tela"><code>/catalogo</code><p>Os salgados da empresa, para o desperdício ser contado por item</p></div>
+        <div class="tela"><code>/empresa</code><p>Código de acesso, lojas, funcionários e aparelhos conectados</p></div>
+        <div class="tela"><code>/&lt;empresa&gt;</code><p>O formulário do turno, no endereço público de cada empresa</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Quem enxerga o quê</h2>
+      <p class="intro">Todo usuário pertence a um grupo; sem grupo, o login é recusado. O isolamento por empresa vive no <code>get_queryset</code> de cada ViewSet — quem chamar a API direto continua vendo só a própria conta.</p>
+      <div class="perfis">
+        <div class="perfil">
+          <strong>Admin</strong>
+          <p>Tudo, mais o Django Admin.</p>
+        </div>
+        <div class="perfil">
+          <strong>Gerente</strong>
+          <p>A própria empresa: código de acesso, lojas, funcionários, quem pode retirar dinheiro — e o painel.</p>
+        </div>
+        <div class="perfil">
+          <strong>Funcionario</strong>
+          <p>O painel. Vê, confere e corrige o caixa; não administra a empresa.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Quatro decisões que explicam o resto</h2>
+      <div class="decisoes">
+        <div class="decisao">
+          <h3>O token nunca chega ao JavaScript</h3>
+          <p>O JWT vive em cookie HTTP-only. O navegador chama sempre o próprio domínio, em <code>/backend/*</code>, e o Next reescreve para o Django — assim o cookie continua first-party.</p>
+        </div>
+        <div class="decisao">
+          <h3>A empresa vem do cookie, não da URL</h3>
+          <p>O aparelho da loja carrega a empresa no próprio cookie. Trocar um número no endereço não abre as lojas de mais ninguém.</p>
+        </div>
+        <div class="decisao">
+          <h3>Nenhuma despesa entra sem prova</h3>
+          <p>A NF-e chega como XML, lida com proteção contra expansão de entidades. Nota de saída, nota de outra empresa e nota repetida são recusadas — e a mesma prova não entra duas vezes.</p>
+        </div>
+        <div class="decisao">
+          <h3>Nada sob <code>/api/</code> é guardado</h3>
+          <p>Toda resposta sai com <code>Cache-Control: no-store</code>. Sem isso a lista de lojas congelava no celular do balcão mesmo depois de recarregar — o pedido nem saía do aparelho.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="feito-com">
+      <h2>Como é feito</h2>
+      <p class="intro">Dois repositórios independentes, cada um com o seu Docker Compose, ligados como submódulos no repositório guarda-chuva. Deploy em Coolify.</p>
+      <div class="pilha">
+        <div>
+          <h3>Backend</h3>
+          <p class="repo-nome">FechaCaixa-back</p>
+          <ul>
+            <li>Python 3.12 · Django 6 <span>base</span></li>
+            <li>Django REST Framework <span>rotas e regras</span></li>
+            <li>SimpleJWT <span>token em cookie HTTP-only</span></li>
+            <li>Celery + Redis <span>trabalho em segundo plano</span></li>
+            <li>MySQL <span>banco</span></li>
+            <li>drf-spectacular <span>Swagger gerado do código</span></li>
+            <li>openpyxl <span>planilha do painel</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Frontend</h3>
+          <p class="repo-nome">FechaCaixa-front</p>
+          <ul>
+            <li>Next.js 16 <span>App Router</span></li>
+            <li>React 19 · TypeScript <span>componentes e tipos</span></li>
+            <li>Tailwind CSS 4 · HeroUI <span>estilo</span></li>
+            <li>TanStack Query <span>cache dos dados do servidor</span></li>
+            <li>Zustand <span>estado de sessão</span></li>
+            <li>Vitest <span>testes</span></li>
+            <li>PWA <span>o formulário instala no celular</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="repositorios">
+      <h2>O código</h2>
+      <p class="intro">Cada repositório tem o próprio README, com as variáveis de ambiente, os comandos e as decisões daquele lado.</p>
+      <div class="repos">
+        <a class="repo" href="https://github.com/znt10/FechaCaixa">
+          <strong>znt10/FechaCaixa</strong>
+          <span>O guarda-chuva: visão geral e quick start com os dois submódulos.</span>
+        </a>
+        <a class="repo" href="https://github.com/znt10/FechaCaixa-back">
+          <strong>znt10/FechaCaixa-back</strong>
+          <span>A API: autenticação, permissões, fechamentos e notas fiscais.</span>
+        </a>
+        <a class="repo" href="https://github.com/znt10/FechaCaixa-front">
+          <strong>znt10/FechaCaixa-front</strong>
+          <span>A interface: o formulário do turno e o painel da gerência.</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>FechaCaixa — fechamento de caixa para redes de lojas. Licença MIT.</span>
+    <span>Feito por <a href="https://github.com/znt10">znt10</a></span>
+  </footer>
+</div>
+
+</body>
+</html>
