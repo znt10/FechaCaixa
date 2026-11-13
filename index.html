@@ -6,7 +6,7 @@
 <title>FechaCaixa · fechamento de caixa para redes de lojas</title>
 <meta name="description" content="Cada loja fecha o caixa pelo celular, em dois minutos, e você vê no painel quanto cada uma fez, o que saiu da gaveta e quem ainda não lançou. R$150 por mês para até 5 lojas." />
 <link rel="canonical" href="https://www.fechacaixa.io/" />
-<meta property="og:title" content="FechaCaixa · o caixa de todas as lojas num lugar só" />
+<meta property="og:title" content="FechaCaixa · saiba na hora quanto cada loja fez" />
 <meta property="og:description" content="Cada loja fecha o caixa pelo celular. Você confere tudo num painel. R$150/mês para até 5 lojas." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://www.fechacaixa.io/" />
@@ -86,10 +86,13 @@
 
   /* ---------- herói ---------- */
   .heroi{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:40px 0 76px;}
-  .heroi h1{font-size:clamp(34px,4.6vw,54px);line-height:1.08;letter-spacing:-.034em;font-weight:700;margin:0 0 20px;max-width:15ch;}
+  .heroi h1{font-size:clamp(32px,4.3vw,50px);line-height:1.08;letter-spacing:-.034em;font-weight:700;margin:0 0 20px;max-width:17ch;}
   .heroi p{margin:0 0 30px;font-size:19px;color:var(--corpo);max-width:44ch;}
   .preco-curto{margin-top:18px;font-size:15px;color:var(--apagado);}
   .preco-curto b{color:var(--verde);}
+  .garantias{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14.5px;color:var(--corpo);}
+  .garantias li{position:relative;padding-left:20px;}
+  .garantias li::before{content:"";position:absolute;left:2px;top:8px;width:10px;height:5px;border-left:2px solid var(--verde);border-bottom:2px solid var(--verde);transform:rotate(-45deg);}
 
   /* ---------- comprovante ---------- */
   .comprovante{
@@ -153,6 +156,10 @@
   .preco li:last-child{border-bottom:none;}
   .preco li::before{content:"";position:absolute;left:2px;top:15px;width:12px;height:7px;border-left:2px solid var(--verde);border-bottom:2px solid var(--verde);transform:rotate(-45deg);}
   .mais-lojas{margin-top:18px;font-size:15.5px;color:var(--apagado);}
+  .comecar{list-style:none;counter-reset:c;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .comecar li{counter-increment:c;font-size:15px;color:var(--corpo);}
+  .comecar li::before{content:counter(c);display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--verde-suave);color:var(--verde);font:600 13px "IBM Plex Mono",monospace;margin-bottom:8px;}
+  .comecar b{display:block;color:var(--tinta);font-size:16px;margin-bottom:2px;}
   .mais-lojas a{color:var(--verde);font-weight:600;}
 
   /* demonstração */
@@ -164,7 +171,9 @@
   .demo p{margin:0;color:#b9cfc5;max-width:46ch;font-size:16.5px;}
   .credenciais{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:11px;padding:18px 22px;min-width:270px;}
   .credencial{display:flex;justify-content:space-between;gap:20px;padding:5px 0;font-size:14.5px;}
-  .credencial span{color:#9db8ac;}
+  .credencial span{color:#9db8ac;flex:1;}
+  .copiar{background:none;border:1px solid rgba(255,255,255,.22);color:#cfe0d8;border-radius:6px;font:500 12px "Instrument Sans",sans-serif;padding:2px 8px;cursor:pointer;}
+  .copiar:hover{border-color:#fff;color:#fff;}
   .credencial b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:#fff;}
   .demo .btn{margin-top:14px;display:block;}
 
@@ -194,7 +203,7 @@
   @media (max-width:900px){
     .heroi{grid-template-columns:1fr;gap:44px;padding:24px 0 56px;}
     .heroi h1{max-width:none;}
-    .dores,.passos,.recursos{grid-template-columns:1fr;}
+    .dores,.passos,.recursos,.comecar{grid-template-columns:1fr;}
     .passos{gap:22px;}
     .preco{grid-template-columns:1fr;gap:26px;padding:28px 24px;}
     .demo{grid-template-columns:1fr;gap:24px;padding:30px 26px;}
@@ -207,6 +216,12 @@
     .credenciais{min-width:0;}
     .acoes .btn{flex:1 1 100%;}
     .comprovante{padding:20px 18px 0;}
+  }
+  .cta-fixo{display:none;}
+  @media (max-width:560px){
+    .cta-fixo{display:block;position:fixed;left:16px;right:16px;bottom:14px;z-index:10;box-shadow:0 10px 26px -10px rgba(12,58,44,.6);opacity:0;transform:translateY(20px);pointer-events:none;transition:opacity .2s,transform .2s;}
+    .cta-fixo.visivel{opacity:1;transform:none;pointer-events:auto;}
+    footer{padding-bottom:96px;}
   }
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*{transition:none !important;}}
   a:focus-visible,summary:focus-visible{outline:2px solid var(--verde);outline-offset:3px;border-radius:4px;}
@@ -235,13 +250,18 @@
   <main>
     <div class="heroi">
       <div>
-        <h1>O caixa de todas as suas lojas, num lugar só.</h1>
+        <h1>Saiba na hora quanto cada loja fez e qual não fechou o caixa.</h1>
         <p>No fim do turno, cada loja fecha o caixa pelo celular em dois minutos. Você abre o painel e vê quanto cada uma fez, o que saiu da gaveta e quem ainda não lançou. Sem caderno, sem foto no WhatsApp, sem somar na mão.</p>
         <div class="acoes">
           <a class="btn btn-cheio js-whatsapp" href="#contato">Quero usar nas minhas lojas</a>
-          <a class="btn btn-vazio" href="#demonstracao">Ver por dentro</a>
+          <a class="btn btn-vazio" href="#demonstracao">Ver a demonstração</a>
         </div>
         <p class="preco-curto"><b>R$150 por mês</b> para até 5 lojas.</p>
+        <ul class="garantias">
+          <li>Funciona no celular que a loja já tem</li>
+          <li>Funcionária não precisa de login</li>
+          <li>A gente configura as lojas com você</li>
+        </ul>
       </div>
 
       <div class="comprovante" role="img" aria-label="Exemplo do painel: resumo de hoje com três lojas. Centro 4.015,50, conferido. Bairro 2.870,00, conferido. Shopping ainda não lançou. Total do dia 6.885,50.">
@@ -328,17 +348,22 @@
           <li>Ajuda para configurar as suas lojas</li>
         </ul>
       </div>
+      <ol class="comecar">
+        <li><b>Você chama no WhatsApp</b><span>Conta quantas lojas tem e como fecha o caixa hoje.</span></li>
+        <li><b>A gente configura com você</b><span>Cadastramos lojas, funcionários e quem pode retirar dinheiro.</span></li>
+        <li><b>As lojas recebem o código</b><span>O celular do balcão entra uma vez e já pode fechar o turno.</span></li>
+      </ol>
     </section>
 
     <section id="demonstracao">
       <div class="demo">
         <div>
           <h2>Veja por dentro antes de decidir</h2>
-          <p>O painel tem uma conta de demonstração com lojas de exemplo. Entre e navegue à vontade: fechamentos, saídas, gráficos e notas fiscais.</p>
+          <p>O painel tem uma conta de demonstração com lojas de exemplo. Copie o acesso ao lado, entre e navegue à vontade: fechamentos, saídas, gráficos e notas fiscais. Nada do que você mexer lá afeta ninguém.</p>
         </div>
         <div class="credenciais">
-          <div class="credencial"><span>E-mail</span><b>teste@email</b></div>
-          <div class="credencial"><span>Senha</span><b>teste-12345</b></div>
+          <div class="credencial"><span>E-mail</span><b>teste@email</b><button type="button" class="copiar" data-copiar="teste@email">copiar</button></div>
+          <div class="credencial"><span>Senha</span><b>teste-12345</b><button type="button" class="copiar" data-copiar="teste-12345">copiar</button></div>
           <a class="btn btn-claro" href="https://fechacaixa.io/login">Abrir a demonstração</a>
         </div>
       </div>
@@ -361,7 +386,19 @@
         </details>
         <details>
           <summary>Outra empresa consegue ver os meus números?</summary>
-          <p>Não. Cada empresa só enxerga as próprias lojas, e o acesso ao painel é com login.</p>
+          <p>Não. Cada empresa só enxerga as próprias lojas, e esse isolamento é feito no servidor, não só na tela. O acesso ao painel é com login, e o celular da loja só lança o caixa: não vê o painel.</p>
+        </details>
+        <details>
+          <summary>Se eu parar de usar, perco os meus números?</summary>
+          <p>Não. A qualquer momento você exporta a planilha do período, organizada por loja, e guarda onde quiser.</p>
+        </details>
+        <details>
+          <summary>Hoje eu fecho no caderno ou na planilha. Como migro?</summary>
+          <p>Não precisa migrar nada para começar: as lojas passam a fechar pelo FechaCaixa a partir do próximo turno. Se precisar, você lança turnos antigos pelo painel.</p>
+        </details>
+        <details>
+          <summary>Como eu começo?</summary>
+          <p>Chame no WhatsApp. A gente cadastra as suas lojas e funcionários com você e passa o código de acesso para os celulares das lojas.</p>
         </details>
         <details>
           <summary>Tenho mais de 5 lojas. Quanto fica?</summary>
@@ -386,6 +423,8 @@
   </footer>
 </div>
 
+<a class="btn btn-cheio cta-fixo js-whatsapp" href="#contato">Quero usar nas minhas lojas</a>
+
 <script>
   // Número do WhatsApp de vendas: só DDI+DDD+número, sem espaço nem traço.
   var WHATSAPP = "";
@@ -395,6 +434,25 @@
     document.querySelectorAll(".js-whatsapp").forEach(function (a) {
       a.href = link; a.target = "_blank"; a.rel = "noopener";
     });
+  }
+
+  // Copiar credenciais da demonstração
+  document.querySelectorAll(".copiar").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var ok = function () { b.textContent = "copiado"; setTimeout(function () { b.textContent = "copiar"; }, 1500); };
+      if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.copiar).then(ok, function () {});
+    });
+  });
+
+  // CTA fixo no celular: aparece depois do herói e some na chamada final
+  var fixo = document.querySelector(".cta-fixo");
+  var heroi = document.querySelector(".heroi");
+  var final = document.getElementById("contato");
+  if (fixo && "IntersectionObserver" in window) {
+    var heroiVisivel = true, finalVisivel = false;
+    var atualiza = function () { fixo.classList.toggle("visivel", !heroiVisivel && !finalVisivel); };
+    new IntersectionObserver(function (e) { heroiVisivel = e[0].isIntersecting; atualiza(); }).observe(heroi);
+    new IntersectionObserver(function (e) { finalVisivel = e[0].isIntersecting; atualiza(); }).observe(final);
   }
 </script>
 </body>
